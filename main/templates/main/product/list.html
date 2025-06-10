@@ -1,7 +1,43 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Заголовок{% endblock title %}
+{% block title %}Каталог товаров{% endblock title %}
 
 {% block content %}
-Контент страница
+<div class="container mt-4">
+    <h1 class="mb-4">Наши товары</h1>
+    
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100">
+                <!-- Изображение товара -->
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                
+                <div class="card-body">
+                    <!-- Название товара -->
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    
+                    <!-- Описание (обрезанное до 100 символов) -->
+                    <p class="card-text">{{ product.description|truncatechars:100 }}</p>
+                    
+                    <!-- Цена -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold fs-5">{{ product.price }} ₽</span>
+                        <a href="{{ product.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
+                    </div>
+                </div>
+                
+                <!-- Бейдж категории -->
+                <div class="card-footer bg-transparent">
+                    <span class="badge bg-secondary">{{ product.category.name }}</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">Товары не найдены</div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock content %}

@@ -1,11 +1,180 @@
-{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="utf-8">
-    <title>{% block title %}{% endblock title %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Интернет-магазин{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Кастомные стили -->
+    <style>
+        body {
+            padding-top: 56px;
+        }
+        .navbar-brand {
+            font-weight: 700;
+        }
+        .card {
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        .product-image {
+            max-height: 200px;
+            object-fit: contain;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% block content %}{% endblock content %}
+    <!-- Навигационная панель -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'main:product_list' %}">MyShop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:product_list' %}">Главная</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Категории
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for category in categories %}
+                                <li><a class="dropdown-item" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">О нас</a>
+                    </li>
+                </ul>
+                
+                {% comment %} <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'cart:cart_detail' %}">
+                            <i class="fas fa-shopping-cart"></i> Корзина
+                            <span class="badge bg-danger rounded-pill cart-count">
+                                {% with total_items=cart|length %}
+                                    {% if total_items > 0 %}
+                                        {{ total_items }}
+                                    {% else %}
+                                        0
+                                    {% endif %}
+                                {% endwith %}
+                            </span>
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
+                            <li><a class="dropdown-item" href="{% url 'orders:order_history' %}">Мои заказы</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">
+                            <i class="fas fa-sign-in-alt"></i> Войти
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">
+                            <i class="fas fa-user-plus"></i> Регистрация
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul> {% endcomment %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основное содержимое -->
+    <main class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>О магазине</h5>
+                    <p>Лучший интернет-магазин с широким ассортиментом товаров по доступным ценам.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Контакты</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Примерная, 123</li>
+                        <li><i class="fas fa-phone"></i> +7 (123) 456-78-90</li>
+                        <li><i class="fas fa-envelope"></i> info@myshop.ru</li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Мы в соцсетях</h5>
+                    <div class="social-links">
+                        <a href="#" class="me-2 text-dark"><i class="fab fa-vk fa-2x"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="fab fa-telegram fa-2x"></i></a>
+                        <a href="#" class="me-2 text-dark"><i class="fab fa-instagram fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 MyShop. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Кастомные скрипты -->
+    <script>
+        // Активация всплывающих подсказок
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Обновление количества товаров в корзине
+        function updateCartCount(count) {
+            document.querySelector('.cart-count').textContent = count;
+        }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -2,9 +2,11 @@ db.sqlite3
 venv/
 __pycache__/
 
+products/
+media/
+
 .vscode
 .idea
 .env
 
-media/
 
